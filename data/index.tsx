@@ -88,8 +88,8 @@ export const data = {
   footer: {
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sed posuere neque. In dignissim odio eget ligula lacinia, eu feugiat dui maximus. Mauris efficitur erat sit amet leo iaculis mollis.",
     contact: {
-      phone: "+48 695 945 249",
-      email: "re.casa.vacacional@gmail.com",
+      phone: "+AA AAA BBB CCC",
+      email: "example@example.com",
     },
   },
 };
