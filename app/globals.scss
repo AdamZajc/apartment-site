@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter&family=Rubik&display=swap');
+
+$text: #000;
+$background: #fff;
+$primary: #65ae84;
+$secondary: #cdf4dd;
+$accent: #4489bb;
+
+*{
+    font-family: 'Inter', sans-serif;
+}
+
+html {
+    scroll-behavior: smooth !important;
+}
+
+body {
+    color: $text;
+    background-color: $background;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+}
+
+.Rubik {
+    font-family: 'Rubik', sans-serif;
+}
