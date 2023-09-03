@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 import { MdOutlineClose } from "react-icons/md";
 import { RiMenu3Line } from "react-icons/ri";
 
-function NavItem({ text, href, active, index }: any) {
+interface INavItem {
+  text: string;
+  href: string;
+  active: string;
+  index: number;
+}
+
+function NavItem({ text, href, active, index }: INavItem) {
   return (
     <motion.li
       initial={{
@@ -19,9 +26,8 @@ function NavItem({ text, href, active, index }: any) {
         type: "spring",
         delay: index / 10,
       }}
-      className={`relative group ${
-        active === text ? "text-[" + data.colors.primary + "]" : "text-black"
-      }`}
+      className="relative group"
+      style={{ color: active === text ? data.colors.primary : "black" }}
       whileHover={{ color: data.colors.primary }}
     >
       <a href={href}>{text}</a>
@@ -65,7 +71,7 @@ export default function Navbar() {
   }
 
   function handleScroll() {
-    if (window.scrollY >= 400) {
+    if (window.scrollY >= 200) {
       setScrolled(true);
     } else {
       setScrolled(false);
@@ -127,17 +133,19 @@ export default function Navbar() {
         </>
       ) : (
         <ul className="flex gap-10 uppercase ml-auto mr-0">
-          {data.navbar.links.map((link: any, index: number) => {
-            return (
-              <NavItem
-                text={link.text}
-                href={link.href}
-                active={active}
-                key={index}
-                index={index}
-              />
-            );
-          })}
+          {data.navbar.links.map(
+            (link: { text: string; href: string }, index: number) => {
+              return (
+                <NavItem
+                  text={link.text}
+                  href={link.href}
+                  active={active}
+                  key={index}
+                  index={index}
+                />
+              );
+            }
+          )}
         </ul>
       )}
     </nav>

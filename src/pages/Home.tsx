@@ -1,31 +1,75 @@
 import { useEffect, useState } from "react";
-
-// Image Imports
-import b1 from "../assets/apartment/bedroom1.png";
-import l1 from "../assets/apartment/livingroom1.png";
-import l2 from "../assets/apartment/livingroom2.png";
-import t1 from "../assets/apartment/terrace1.png";
-import sp1 from "../assets/apartment/swimmingpool1.jpg";
-import sp2 from "../assets/apartment/swimmingpool2.jpg";
 import { data } from "../data";
+import { Map, SVGWaves } from "../components";
+
+// Icons
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 export function Home() {
-  const i1 = [b1, l1, t1];
-  const i2 = [sp1, l2, sp2];
+  const i1 = [
+    ...data.photos.beedroom,
+    ...data.photos.livingroom,
+    ...data.photos.kitchen,
+  ];
+  const i2 = [
+    ...data.photos.swimming_pool,
+    ...data.photos.terrace,
+    ...data.photos.bathroom,
+  ];
 
-  const [src1, setSrc1] = useState(b1);
-  const [src2, setSrc2] = useState(sp1);
+  const [src1, setSrc1] = useState(i1[0]);
+  const [src2, setSrc2] = useState(i2[0]);
+
+  const [deviceSize, setDeviceSize] = useState<
+    "x-small" | "small" | "medium" | "large"
+  >();
+
+  function handleResize() {
+    if (window.innerWidth >= 1024) {
+      setDeviceSize("large");
+    } else if (window.innerHeight <= 1023 && window.innerHeight >= 768) {
+      setDeviceSize("medium");
+    } else if (window.innerWidth <= 767 && window.innerHeight >= 426) {
+      setDeviceSize("small");
+    } else if (window.innerWidth < 426) {
+      setDeviceSize("x-small");
+    }
+  }
+
+  function getTransform() {
+    if (deviceSize === "small") {
+      return "scale(0.75)";
+    } else if (deviceSize === "x-small") {
+      return "scale(0.8)";
+    }
+  }
+
+  useEffect(() => {
+    handleResize();
+  }, []);
 
   useEffect(() => {
     setInterval(() => {
-      setSrc1(i1[i1.indexOf(src1) < i1.length - 1 ? i1.indexOf(src1) + 1 : 0]);
-      setSrc2(i2[i2.indexOf(src2) < i2.length - 1 ? i2.indexOf(src2) + 1 : 0]);
+      setSrc1((s) => i1[i1.indexOf(s) < i1.length - 1 ? i1.indexOf(s) + 1 : 0]);
+      setSrc2((s) => i2[i2.indexOf(s) < i2.length - 1 ? i2.indexOf(s) + 1 : 0]);
     }, 5000);
-  }, []);
+
+    // Event Listeners
+    window.addEventListener("resize", handleResize, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  });
+
   return (
     <main>
-      <section className="flex justify-center items-center gap-24 h-screen">
-        <div>
+      <section className="grid grid-flow-row mb-48 lg:mb-0 lg:flex justify-center items-center place-items-center gap-24 h-screen">
+        <div
+          style={{
+            transform: getTransform() || "",
+          }}
+        >
           <img
             src={src1}
             alt="view"
@@ -56,11 +100,100 @@ export function Home() {
             <button
               className="uppercase font-semibold px-8 py-2 rounded-lg border-[3px]"
               style={{ borderColor: data.colors.accent2 }}
+              onClick={() => window.location.replace("/gallery")}
             >
-              Attractions
+              Photo Gallery
             </button>
           </div>
         </div>
+      </section>
+      <section>
+        <SVGWaves />
+        <div
+          className="px-32 py-8"
+          style={{ backgroundColor: data.colors.primary }}
+        >
+          <h1 className="text-white Rubik text-center text-5xl mb-5 font-bold">
+            Our offer includes
+          </h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {data.included.map((item: any, index: number) => {
+              return (
+                <div
+                  className="px-8 py-3 bg-white rounded-lg flex items-center justify-center gap-4 text-lg"
+                  key={index}
+                >
+                  <div style={{ color: data.colors.accent2, fontSize: "2rem" }}>
+                    {item.icon}
+                  </div>
+                  {item.text}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <SVGWaves rotated />
+      </section>
+      <Map />
+      <section>
+        <SVGWaves />
+        <div
+          className="px-56 py-8"
+          style={{ backgroundColor: data.colors.primary }}
+        >
+          <h1 className="text-white Rubik text-center text-5xl mb-5 font-bold">
+            How to get there?
+          </h1>
+          <div className="grid grid-cols-3 gap-12">
+            {data.transport.map((t: any, index: number) => {
+              return (
+                <div
+                  style={{
+                    backgroundColor:
+                      index % 2 === 0 ? "white" : data.colors.accent2,
+                    color: index % 2 === 0 ? "" : "white",
+                  }}
+                  className="px-8 py-6 rounded-xl text-sm"
+                >
+                  <div className="flex">
+                    <h1 className="flex items-center gap-1.5 text-4xl font-bold">
+                      {t.icon}
+                      {t.line ? t.line : ""}
+                    </h1>
+                    <div className="ml-auto mr-0 text-sm">
+                      {t.from ? (
+                        <p className="flex gap-2">
+                          <div className="text-xs">from</div> {t.from}
+                        </p>
+                      ) : (
+                        ""
+                      )}
+
+                      <p className="flex gap-2">
+                        <div className="text-xs">to</div> {t.to}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="my-4 h-40">{t.instructions}</p>
+                  <p className="flex items-center gap-1">
+                    <FaMapMarkerAlt className="text-lg" />
+                    {t.method === "car"
+                      ? "Start navigation "
+                      : "Check the timetable "}
+                    <a
+                      href={t.website}
+                      style={{ color: data.colors.primary }}
+                      target="_blank"
+                    >
+                      here
+                    </a>
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <SVGWaves rotated />
       </section>
     </main>
   );
